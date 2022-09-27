@@ -188,6 +188,27 @@ export async function runSheet(
             await page.click(l, { force: true });
             break;
 
+            //dragdrop 
+            case "dragdrop":
+              logAll("dragdrop", l, d);
+              const dragElement = loc;
+              const dropElement = page.locator(d);
+              if(dragElement && dropElement){
+                const dragBound = await dragElement.boundingBox() 
+                const dropBound = await dropElement.boundingBox() 
+                if(dragBound && dragBound){
+                  await page.mouse.move(dragBound.x + dragBound.width / 2, dragBound.y + dragBound.height / 2);
+                  await page.mouse.down();
+                  await page.mouse.move(dropBound.x + dropBound.width / 2, dropBound.y + dropBound.height / 2);
+                  await page.mouse.up();
+                }else{
+                  throw new Error("dragdrop elements are not bound")   
+                }
+              }else{
+                throw new Error("dragdrop elements are null") 
+              }
+            break;
+
           case "frame":
           case "iframe":
             ctxStack.push(ctx);
