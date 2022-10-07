@@ -127,7 +127,7 @@ export async function runSheet(
           case "keys":
             await loc.fill(d, tos);
             break;
-          // case 'dnd': await page.dragAndDrop(l, d, tos); break //TBD: Is it working?!
+          case 'dnd': await page.dragAndDrop(l, d, tos); break //TBD: Is it working?!
           case "click":
             await loc.click(tos);
             break;
@@ -161,6 +161,10 @@ export async function runSheet(
           case "key:enter":
             await loc.press("Enter", tos);
             break;
+          case "key:clear":
+            await loc.press("Control+A", tos);
+            await loc.press("Backspace", tos);
+            break;            
           case "select":
             await page.selectOption(l, d.split(","));
             break;
@@ -175,40 +179,8 @@ export async function runSheet(
 
               await filechooser.setFiles(d.split(","));
             });
-            await page().click(l, { force: true });
-            break;
-
-          //add multiple files from Browser Open Dialog
-          case "files":
-            page.on("filechooser", async (filechooser) => {
-              logAll("fileChooser", d);
-
-              await filechooser.setFiles(d.split(","));
-            });
             await page.click(l, { force: true });
             break;
-
-            //dragdrop 
-            case "dragdrop":
-              logAll("dragdrop", l, d);
-              const dragElement = loc;
-              const dropElement = page.locator(d);
-              if(dragElement && dropElement){
-                const dragBound = await dragElement.boundingBox() 
-                const dropBound = await dropElement.boundingBox() 
-                if(dragBound && dragBound){
-                  await page.mouse.move(dragBound.x + dragBound.width / 2, dragBound.y + dragBound.height / 2);
-                  await page.mouse.down();
-                  await page.mouse.move(dropBound.x + dropBound.width / 2, dropBound.y + dropBound.height / 2);
-                  await page.mouse.up();
-                }else{
-                  throw new Error("dragdrop elements are not bound")   
-                }
-              }else{
-                throw new Error("dragdrop elements are null") 
-              }
-            break;
-
           case "frame":
           case "iframe":
             ctxStack.push(ctx);
