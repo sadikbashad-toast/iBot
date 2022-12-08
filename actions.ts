@@ -100,6 +100,8 @@ export async function runSheet(
           case "url":
             await page.goto(l);
             break;
+          case "screenshot": await page.screenshot({ path: d, fullPage: true });
+            break;  
           case "title":
             await expect(ctx as Page).toHaveTitle(rexss(d), tos);
             break;
